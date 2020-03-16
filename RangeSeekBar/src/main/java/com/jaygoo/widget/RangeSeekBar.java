@@ -111,6 +111,7 @@ public class RangeSeekBar extends View {
     //刻度上显示的文字
     //The texts displayed on the scale
     private CharSequence[] tickMarkTextArray;
+    private CharSequence[] tickMarkTextArrayInBetween;
     //进度条圆角
     //radius of progress bar
     private float progressRadius;
@@ -137,6 +138,7 @@ public class RangeSeekBar extends View {
     //enable RangeSeekBar two thumb Overlap
     private boolean enableThumbOverlap;
 
+    private boolean enableInBetweenValues = false;
     //the color of step divs
     private int stepsColor;
     //the width of each step
@@ -155,7 +157,7 @@ public class RangeSeekBar extends View {
     //****************** the above is attr value  ******************//
 
     private boolean isEnable = true;
-    float touchDownX,touchDownY;
+    float touchDownX, touchDownY;
     //剩余最小间隔的进度
     float reservePercent;
     boolean isScaleThumb = false;
@@ -165,6 +167,8 @@ public class RangeSeekBar extends View {
     Rect progressSrcRect = new Rect();
     RectF stepDivRect = new RectF();
     Rect tickMarkTextRect = new Rect();
+    Rect tickMarkTextRectInBetween = new Rect();
+
     SeekBar leftSB;
     SeekBar rightSB;
     SeekBar currTouchSB;
@@ -384,8 +388,11 @@ public class RangeSeekBar extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         onDrawTickMark(canvas, paint);
+        onDrawTickMarksInBetween(canvas, paint);
         onDrawProgressBar(canvas, paint);
         onDrawSteps(canvas, paint);
+        if (enableInBetweenValues)
+            onDrawStepsInBetween(canvas, paint);
         onDrawSeekBar(canvas);
     }
 
@@ -427,6 +434,45 @@ public class RangeSeekBar extends View {
                     y = getProgressBottom() + tickMarkTextMargin + tickMarkTextRect.height();
                 }
                 canvas.drawText(text2Draw, x, y, paint);
+            }
+        }
+    }
+
+    protected void onDrawTickMarksInBetween(Canvas canvas, Paint paint) {
+        if (tickMarkTextArrayInBetween != null) {
+            int trickPartWidth = progressWidth / (tickMarkTextArrayInBetween.length - 1);
+            for (int i = 0; i < tickMarkTextArrayInBetween.length; i++) {
+                final String text2Draw = tickMarkTextArrayInBetween[i].toString();
+                if (TextUtils.isEmpty(text2Draw)) continue;
+                paint.getTextBounds(text2Draw, 0, text2Draw.length(), tickMarkTextRectInBetween);
+                paint.setColor(tickMarkTextColor);
+                //平分显示
+                float x;
+                if (tickMarkMode == TRICK_MARK_MODE_OTHER) {
+                    if (tickMarkGravity == TICK_MARK_GRAVITY_RIGHT) {
+                        x = getProgressLeft() + i * trickPartWidth - tickMarkTextRectInBetween.width();
+                    } else if (tickMarkGravity == TICK_MARK_GRAVITY_CENTER) {
+                        x = getProgressLeft() + i * trickPartWidth - tickMarkTextRectInBetween.width() / 2f;
+                    } else {
+                        x = getProgressLeft() + i * trickPartWidth;
+                    }
+                } else {
+                    float num = Utils.parseFloat(text2Draw);
+                    SeekBarState[] states = getRangeSeekBarState();
+                    if (Utils.compareFloat(num, states[0].value) != -1 && Utils.compareFloat(num, states[1].value) != 1 && (seekBarMode == SEEKBAR_MODE_RANGE)) {
+                        paint.setColor(tickMarkInRangeTextColor);
+                    }
+                    //按实际比例显示
+                    x = getProgressLeft() + progressWidth * (num - minProgress) / (maxProgress - minProgress)
+                            - tickMarkTextRectInBetween.width() / 2f;
+                }
+                float y;
+                if (tickMarkLayoutGravity == Gravity.TOP) {
+                    y = getProgressTop() - tickMarkTextMargin;
+                } else {
+                    y = getProgressBottom() + tickMarkTextMargin + tickMarkTextRectInBetween.height();
+                }
+                canvas.drawText(text2Draw, x * 3 / 2, y, paint);
             }
         }
     }
@@ -473,6 +519,25 @@ public class RangeSeekBar extends View {
             canvas.drawRoundRect(progressDstRect, progressRadius, progressRadius, paint);
         }
 
+    }
+
+    protected void onDrawStepsInBetween(Canvas canvas, Paint paint) {
+        if (!verifyStepsMode()) return;
+        int stepsInBetween = steps;
+        int stepMarks = getProgressWidth() / (stepsInBetween);
+        int offset = stepMarks / 2;
+        float extHeight = (stepsInBetween - getProgressHeight());
+        for (int k = 0; k < stepsInBetween; k++) {
+            float x = offset + getProgressLeft() + k * stepMarks - stepsWidth / 3f;
+            stepDivRect.set(x, getProgressTop() - extHeight, x + stepsWidth,
+                    getProgressBottom() + extHeight);
+            if (stepsBitmaps.isEmpty() || stepsBitmaps.size() <= k) {
+                paint.setColor(stepsColor);
+                canvas.drawRoundRect(stepDivRect, stepsRadius, stepsRadius, paint);
+            } else {
+                canvas.drawBitmap(stepsBitmaps.get(k), null, stepDivRect, paint);
+            }
+        }
     }
 
     //draw steps
@@ -559,7 +624,7 @@ public class RangeSeekBar extends View {
 
     //calculate currTouchSB percent by MotionEvent
     protected float calculateCurrentSeekBarPercent(float touchDownX) {
-        if (currTouchSB == null)return 0;
+        if (currTouchSB == null) return 0;
         float percent = (touchDownX - getProgressLeft()) * 1f / (progressWidth);
         if (touchDownX < getProgressLeft()) {
             percent = 0;
@@ -688,7 +753,8 @@ public class RangeSeekBar extends View {
             case MotionEvent.ACTION_UP:
                 if (verifyStepsMode() && stepsAutoBonding) {
                     float percent = calculateCurrentSeekBarPercent(getEventX(event));
-                    float stepPercent = 1.0f / steps;
+                    float stepPercent =
+                            enableInBetweenValues ? 1.0f / steps / 2 : 1.0f / steps;
                     int stepSelected = new BigDecimal(percent / stepPercent).setScale(0, RoundingMode.HALF_UP).intValue();
                     currTouchSB.slide(stepSelected * stepPercent);
                 }
@@ -972,6 +1038,7 @@ public class RangeSeekBar extends View {
     /**
      * {@link #SEEKBAR_MODE_SINGLE} is single SeekBar
      * {@link #SEEKBAR_MODE_RANGE} is range SeekBar
+     *
      * @param seekBarMode
      */
     public void setSeekBarMode(@SeekBarModeDef int seekBarMode) {
@@ -986,6 +1053,7 @@ public class RangeSeekBar extends View {
     /**
      * {@link #TICK_MARK_GRAVITY_LEFT} is number tick mark, it will locate the position according to the value.
      * {@link #TICK_MARK_GRAVITY_RIGHT} is text tick mark, it will be equally positioned.
+     *
      * @param tickMarkMode
      */
     public void setTickMarkMode(@TickMarkModeDef int tickMarkMode) {
@@ -1017,6 +1085,7 @@ public class RangeSeekBar extends View {
      * {@link #TICK_MARK_GRAVITY_LEFT}
      * {@link #TICK_MARK_GRAVITY_RIGHT}
      * {@link #TICK_MARK_GRAVITY_CENTER}
+     *
      * @param tickMarkGravity
      */
     public void setTickMarkGravity(@TickMarkGravityDef int tickMarkGravity) {
@@ -1029,6 +1098,10 @@ public class RangeSeekBar extends View {
 
     public void setTickMarkTextArray(CharSequence[] tickMarkTextArray) {
         this.tickMarkTextArray = tickMarkTextArray;
+    }
+
+    public void setTickMarkTextArrayInBetween(CharSequence[] tickMarkTextArray) {
+        this.tickMarkTextArrayInBetween = tickMarkTextArray;
     }
 
     public float getMinInterval() {
@@ -1057,6 +1130,10 @@ public class RangeSeekBar extends View {
 
     public void setProgressDefaultColor(@ColorInt int progressDefaultColor) {
         this.progressDefaultColor = progressDefaultColor;
+    }
+
+    public void setEnableInBetweenValues(boolean enableInBetweenValues) {
+        this.enableInBetweenValues = enableInBetweenValues;
     }
 
     public int getProgressDrawableId() {
@@ -1163,6 +1240,7 @@ public class RangeSeekBar extends View {
     /**
      * the tick mark layout gravity
      * Gravity.TOP and Gravity.BOTTOM
+     *
      * @param tickMarkLayoutGravity
      */
     public void setTickMarkLayoutGravity(@TickMarkLayoutGravityDef int tickMarkLayoutGravity) {
@@ -1176,6 +1254,7 @@ public class RangeSeekBar extends View {
     /**
      * the RangeSeekBar gravity
      * Gravity.TOP and Gravity.BOTTOM
+     *
      * @param gravity
      */
     public void setGravity(@GravityDef int gravity) {

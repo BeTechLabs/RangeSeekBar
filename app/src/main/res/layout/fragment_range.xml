@@ -14,10 +14,9 @@
         android:layout_height="wrap_content"
         app:rsb_gravity="center"
         app:rsb_mode="range"
-        app:rsb_thumb_drawable="@drawable/thumb_gradient"
-        app:rsb_progress_drawable_default="@drawable/progress_defalut"
         app:rsb_progress_drawable="@drawable/progress"
-        />
+        app:rsb_progress_drawable_default="@drawable/progress_defalut"
+        app:rsb_thumb_drawable="@drawable/thumb_gradient" />
 
     <com.jaygoo.widget.RangeSeekBar
         android:id="@+id/sb_range_2"
@@ -25,29 +24,27 @@
         android:layout_height="wrap_content"
         app:rsb_gravity="center"
         app:rsb_mode="range"
-        app:rsb_thumb_drawable="@drawable/thumb_colorful"
-        app:rsb_progress_drawable_default="@drawable/progress_defalut"
         app:rsb_progress_drawable="@drawable/progress"
-        />
+        app:rsb_progress_drawable_default="@drawable/progress_defalut"
+        app:rsb_thumb_drawable="@drawable/thumb_colorful" />
 
     <com.jaygoo.widget.RangeSeekBar
         android:id="@+id/sb_range_3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:rsb_mode="range"
-        app:rsb_tick_mark_layout_gravity="bottom"
-        app:rsb_tick_mark_text_margin="15dp"
-        app:rsb_progress_color="@color/colorProgress"
-        app:rsb_min_interval="50"
-        app:rsb_thumb_drawable="@drawable/thumb_yellow_stroke"
-        app:rsb_indicator_show_mode="alwaysShow"
-        app:rsb_indicator_height="30dp"
-        app:rsb_indicator_width="50dp"
-        app:rsb_indicator_margin="5dp"
         app:rsb_indicator_background_color="@color/colorProgress"
+        app:rsb_indicator_height="30dp"
+        app:rsb_indicator_margin="5dp"
+        app:rsb_indicator_show_mode="alwaysShow"
+        app:rsb_indicator_width="50dp"
+        app:rsb_min_interval="50"
+        app:rsb_mode="range"
+        app:rsb_progress_color="@color/colorProgress"
+        app:rsb_thumb_drawable="@drawable/thumb_yellow_stroke"
+        app:rsb_tick_mark_layout_gravity="bottom"
         app:rsb_tick_mark_mode="number"
         app:rsb_tick_mark_text_array="@array/markArray5"
-        />
+        app:rsb_tick_mark_text_margin="15dp" />
 
     <com.jaygoo.widget.RangeSeekBar
         android:id="@+id/sb_range_4"
@@ -56,23 +53,21 @@
         app:rsb_gravity="center"
         app:rsb_mode="range"
         app:rsb_progress_color="@color/colorAccent"
-        app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
         app:rsb_thumb_drawable="@drawable/thumb_activated"
-        />
+        app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated" />
 
     <com.jaygoo.widget.RangeSeekBar
         android:id="@+id/sb_range_5"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         app:rsb_mode="range"
-        app:rsb_thumb_drawable="@drawable/thumb_green_alpha"
         app:rsb_progress_color="@color/colorAccent"
-        app:rsb_tick_mark_layout_gravity="top"
-        app:rsb_tick_mark_text_array="@array/markArray4"
+        app:rsb_thumb_drawable="@drawable/thumb_green_alpha"
         app:rsb_tick_mark_gravity="center"
+        app:rsb_tick_mark_layout_gravity="top"
         app:rsb_tick_mark_mode="number"
-        app:rsb_tick_mark_text_margin="20dp"
-        />
+        app:rsb_tick_mark_text_array="@array/markArray4"
+        app:rsb_tick_mark_text_margin="20dp" />
 
     <com.jaygoo.widget.RangeSeekBar
         android:id="@+id/sb_range_6"
@@ -80,14 +75,13 @@
         android:layout_height="wrap_content"
         app:rsb_gravity="bottom"
         app:rsb_mode="range"
-        app:rsb_thumb_drawable="@drawable/thumb_yellow_stroke"
         app:rsb_progress_color="@color/colorProgress"
+        app:rsb_thumb_drawable="@drawable/thumb_yellow_stroke"
         app:rsb_tick_mark_layout_gravity="bottom"
-        app:rsb_tick_mark_text_array="@array/wordsArray"
         app:rsb_tick_mark_mode="other"
-        app:rsb_tick_mark_text_margin="20dp"
+        app:rsb_tick_mark_text_array="@array/wordsArray"
         app:rsb_tick_mark_text_color="@color/colorProgress"
-        />
+        app:rsb_tick_mark_text_margin="20dp" />
 
     <com.jaygoo.widget.RangeSeekBar
         android:id="@+id/sb_range_8"
@@ -95,7 +89,35 @@
         android:layout_height="wrap_content"
         app:rsb_gravity="bottom"
         app:rsb_mode="range"
-        app:rsb_thumb_drawable="@drawable/thumb_yellow_stroke"
         app:rsb_progress_color="@color/colorProgress"
-        />
+        app:rsb_thumb_drawable="@drawable/thumb_yellow_stroke" />
+
+    <com.jaygoo.widget.RangeSeekBar
+        android:id="@+id/days_sb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/vertical_margin"
+        android:paddingStart="@dimen/vertical_margin_large"
+        android:paddingEnd="@dimen/vertical_margin_large"
+        android:paddingBottom="@dimen/vertical_margin"
+        app:rsb_gravity="bottom"
+        app:rsb_indicator_padding_bottom="@dimen/vertical_margin"
+        app:rsb_indicator_padding_top="@dimen/vertical_margin"
+        app:rsb_indicator_text_color="@color/colorRed"
+        app:rsb_mode="range"
+        app:rsb_progress_color="@color/colorPrimary"
+        app:rsb_progress_default_color="@color/colorForegroundDarker"
+        app:rsb_step_auto_bonding="true"
+        app:rsb_step_color="@color/colorForegroundDarker"
+        app:rsb_step_height="15dp"
+        app:rsb_step_width="2dp"
+        app:rsb_thumb_drawable="@drawable/circle_range_select"
+        app:rsb_thumb_height="20dp"
+        app:rsb_thumb_width="20dp"
+        app:rsb_tick_mark_gravity="center"
+        app:rsb_tick_mark_layout_gravity="bottom"
+        app:rsb_tick_mark_mode="other"
+        app:rsb_tick_mark_text_color="@color/colorRed"
+        app:rsb_tick_mark_text_margin="10dp" />
+
 </LinearLayout>
