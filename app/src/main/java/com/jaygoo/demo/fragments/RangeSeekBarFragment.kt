@@ -77,7 +77,7 @@ class RangeSeekBarFragment : BaseFragment() {
         sb_range_8?.leftSeekBar?.thumbDrawableId = R.drawable.step_1
         sb_range_8?.rightSeekBar?.thumbDrawableId = R.drawable.step_2
         days_sb.apply {
-            steps = 6
+            steps = 1
             tickMarkTextArray = arrayOf("1", "3", "5", "6", "8", "9", "10")
             setEnableInBetweenValues(true)
             invalidate()

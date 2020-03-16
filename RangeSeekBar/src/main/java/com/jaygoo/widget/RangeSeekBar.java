@@ -523,10 +523,10 @@ public class RangeSeekBar extends View {
 
     protected void onDrawStepsInBetween(Canvas canvas, Paint paint) {
         if (!verifyStepsMode()) return;
-        int stepsInBetween = steps;
+        int stepsInBetween = steps ;
         int stepMarks = getProgressWidth() / (stepsInBetween);
         int offset = stepMarks / 2;
-        float extHeight = (stepsInBetween - getProgressHeight());
+        float extHeight = (stepsHeight - getProgressHeight())/3;
         for (int k = 0; k < stepsInBetween; k++) {
             float x = offset + getProgressLeft() + k * stepMarks - stepsWidth / 3f;
             stepDivRect.set(x, getProgressTop() - extHeight, x + stepsWidth,
